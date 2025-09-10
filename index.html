@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cactus Random Songs</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --dark: #0f172a;
+      --darker: #020617;
+      --light: #e6eef8;
+      --gray: #94a3b8;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, var(--darker), var(--dark));
+      color: var(--light);
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: bold;
+      background: linear-gradient(to right, var(--primary), #7dd3fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .random-box {
+      background: rgba(2, 44, 67, 0.5);
+      padding: 25px;
+      border-radius: 16px;
+      text-align: center;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    /* === الزر الجديد المتناسق === */
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 35px;
+      font-size: 22px;
+      font-weight: bold;
+      color: var(--light);
+      background: var(--primary);
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 5px 5px 0 var(--darker);
+      transition: all 0.4s ease;
+      border-radius: 8px;
+    }
+
+    .cta:hover {
+      box-shadow: 8px 8px 0 #fbc638;
+      background: var(--primary-dark);
+    }
+
+    .cta svg {
+      margin-left: 12px;
+      width: 35px;
+      height: 20px;
+      transition: transform 0.4s ease;
+    }
+
+    .cta:hover svg {
+      transform: translateX(5px);
+    }
+
+    .picked-song {
+      margin-top: 25px;
+      display: none;
+      animation: fadeIn 0.5s;
+    }
+
+    .picked-song.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === Spotify Card === */
+    .card {
+      position: relative;
+      width: 280px;
+      background: #191414;
+      border-radius: 12px;
+      padding: 15px;
+      margin: auto;
+      box-shadow: 0 0 25px rgba(30, 215, 96, 0.6);
+      animation: glowPulse 2s infinite;
+    }
+
+    @keyframes glowPulse {
+      0% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(59, 130, 246, 1); }
+      100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+    }
+
+    .top { display: flex; gap: 10px; align-items: center; }
+
+    .pfp {
+      width: 45px;
+      height: 45px;
+      background: #d2d2d2;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .texts .title-1 {
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .texts .title-2 {
+      color: var(--primary);
+      font-size: 12px;
+    }
+
+    .playing {
+      display: flex;
+      gap: 2px;
+    }
+
+    .greenline {
+      background: var(--primary);
+      width: 2px;
+      height: 18px;
+      transform-origin: bottom;
+      animation: playing 1s infinite ease-in-out;
+    }
+
+    .greenline:nth-child(1){ animation-delay:0.2s; }
+    .greenline:nth-child(2){ animation-delay:0.4s; }
+    .greenline:nth-child(3){ animation-delay:0.6s; }
+    .greenline:nth-child(4){ animation-delay:0.1s; }
+    .greenline:nth-child(5){ animation-delay:0.3s; }
+
+    @keyframes playing {
+      0% { transform: scaleY(0.2); }
+      50% { transform: scaleY(1); }
+      100% { transform: scaleY(0.3); }
+    }
+
+    .links {
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .links a {
+      margin: 0 10px;
+      font-size: 20px;
+      color: var(--light);
+      transition: 0.3s;
+    }
+
+    .links a:hover {
+      color: var(--primary);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Cactus Random Songs</div>
+      <p>🎶 اضغط على الزر لاختيار أغنية عشوائية</p>
+    </header>
+
+    <div class="random-box">
+      <button id="randomBtn" class="cta">
+        NEXT
+        <svg viewBox="0 0 66 43" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" fill-rule="evenodd">
+            <path class="one" d="M40.15 3.89 L43.97 0.13 L65.69 20.78 L65.70 22.19 L44.67 42.86 L43.97 42.86 L40.15 39.10 L40.14 38.39 L56.99 21.85 L40.15 4.60 Z" fill="#FFFFFF"/>
+            <path class="two" d="M20.15 3.89 L23.97 0.13 L45.69 20.78 L45.70 22.19 L24.67 42.86 L23.97 42.86 L20.15 39.10 L20.14 38.39 L36.99 21.85 L20.15 4.60 Z" fill="#FFFFFF"/>
+            <path class="three" d="M0.15 3.89 L3.97 0.13 L25.69 20.78 L25.70 22.19 L4.67 42.86 L3.97 42.86 L0.15 39.10 L0.14 38.39 L16.99 21.85 L0.15 4.60 Z" fill="#FFFFFF"/>
+          </g>
+        </svg>
+      </button>
+      <div id="picked" class="picked-song"></div>
+    </div>
+  </div>
+
+  <script>
+    const songs = [
+      {title: "bad guy", artist: "Billie Eilish", spotify: "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m?si=507e8c37f6b4402e", youtube: "https://youtu.be/DyDfgMOUjCI?si=4n_RUuPyCRSFQzx1"},
+      {title: "when the party's over", artist: "Billie Eilish", spotify: "https://open.spotify.com/track/43zdsphuZLzwA9k4DJhU0I?si=531b73e3e2b74ae3", youtube: "https://youtu.be/pbMwTqkKSps?si=ddTpsmB7pXHf9Q0J"},
+      {title: "everything i wanted", artist: "Billie Eilish", spotify: "https://open.spotify.com/track/3ZCTVFBt2Brf31RLEnCkWJ", youtube: "https://youtu.be/EgBJmlPo8Xw?si=YT3RSLvAHi3yBpWG"},
+      {title: "Video Games", artist: "Lana Del Rey", spotify: "https://open.spotify.com/track/0fBSs3fRoh1yJcne77fdu9?si=6855c58e7b1446ca", youtube: "https://youtu.be/cE6wxDqdOV0?si=Fw_OOoSfo6oUEwU7"},
+             {title: "Young and Beautiful", artist: "Lana Del Rey", spotify: "https://open.spotify.com/track/2nMeu6UenVvwUktBCpLMK9?si=a178a8ffdb8d4a58", youtube: "https://youtu.be/o_1aF54DO60?si=8zMzZhImcJL5M-5x"},
+            {title: "Stronger", artist: "Kanye West", spotify: "https://open.spotify.com/track/0j2T0R9dR9qdJYsB7ciXhf?si=f50f0bcaa5064d28", youtube: "https://youtu.be/PsO6ZnUZI0g?si=stipsVkyRbTH_EFM"},
+            {title: "Runaway", artist: "Kanye West", spotify: "https://open.spotify.com/track/3DK6m7It6Pw857FcQftMds?si=246cb4676b0d4b79", youtube: "https://youtu.be/EMnQwBTJnMM?si=iQ_DckX43FUn2tqp"},
+            {title: "Gold Digger", artist: "Kanye West", spotify: "https://open.spotify.com/track/1PS1QMdUqOal0ai3Gt7sDQ?si=851cd1c4b1f44960", youtube: "https://youtu.be/6vwNcNOTVzY?si=T_GWbtitIv97G7a1"},
+            {title: "let down", artist: "Radiohead", spotify: "https://open.spotify.com/track/2fuYa3Lx06QQJAm0MjztKr?si=403bded0cbd04893", youtube: "https://youtu.be/EgkI1zI61bQ?si=fYN6cUlQbcny9fl5"},
+            {title: "Creep", artist: "Radiohead", spotify: "https://open.spotify.com/track/70LcF31zb1H0PyJoS1Sx1r?si=f77aa932a68944ec", youtube: "https://youtu.be/XFkzRNyygfk?si=dmV_i8FSGXIyTJHe"},
+            {title: "No Surprises", artist: "Radiohead", spotify: "https://open.spotify.com/track/10nyNJ6zNy2YVYLrcwLccB?si=b098d492350741d9", youtube: "https://youtu.be/LBt60dfwEBY?si=N6TXLKOucGhUKz_m"},
+            {title: "Slow Dancing in the Dark", artist: "Joji", spotify: "https://open.spotify.com/track/6rY5FAWxCdAGllYEOZMbjW?si=ab55e7f18b4541ac", youtube: "https://youtu.be/K3Qzzggn--s?si=sKc3fChbzblbNUZr"},
+            {title: "YEAH RIGHT", artist: "Joji", spotify: "https://open.spotify.com/track/52ooD6LHuXFubM6d1CDD93?si=53c0a26f622e4617", youtube: "https://youtu.be/tG7wLK4aAOE?si=nRnfLYsIXaTOvp5q"},
+            {title: "All the stars", artist: "Kendrick Lamar, SZA", spotify: "https://open.spotify.com/track/3GCdLUSnKSMJhs4Tj6CV3s?si=fd336ed4260d4067", youtube: "https://youtu.be/JQbjS0_ZfJ0?si=bJsEsso2y49PIgTO"},
+            {title: "The Weekend", artist: "SZA", spotify: "https://open.spotify.com/track/6gU9OKjOE7ghfEd55oRO57?si=bb12f0fb5c9f4722", youtube: "https://youtu.be/PALMMqZLAQk?si=aUdUBbXCq2My869X"},
+            {title: "Kill Bill", artist: "SZA", spotify: "https://open.spotify.com/track/3OHfY25tqY28d16oZczHc8?si=1c0406bb8e8f43c4", youtube: "https://youtu.be/SQnc1QibapQ?si=cD8W9zUOHBLLum3y"},
+            {title: "Pray For Me", artist: "The Weeknd, Kendrick Lamar ", spotify: "https://open.spotify.com/track/77UjLW8j5UAGAGVGhR5oUK?si=a79ef2b8ca374d2a", youtube: "https://youtu.be/XR7Ev14vUh8?si=3ZHWkzfmbIkYv6gg"},
+            {title: "Not Like Us", artist: "Kendrick Lamar", spotify: "https://open.spotify.com/track/6AI3ezQ4o3HUoP6Dhudph3?si=4da8d734de394229", youtube: "https://youtu.be/H58vbez_m4E?si=p4WNJbg32WM6sgU3"},
+            {title: "Power Is Power.", artist: "SZA, The Weeknd, Travis Scott", spotify: "https://open.spotify.com/track/4cbdPT6uaBOgOQe3fLMofl?si=74e061251f524fc8", youtube: "https://youtu.be/IfCuarZqJzM?si=LGVu80sqayUPM8Re"},
+            {title: "Lovers' Rock", artist: "TV Girl", spotify: "https://open.spotify.com/track/6dBUzqjtbnIa1TwYbyw5CM?si=5035246a992c492b", youtube: "https://youtu.be/j_sG_Juncn8?si=-CZgPazmfSXOwcTV"},
+            {title: "Blue Hair", artist: "TV Girl", spotify: "https://open.spotify.com/track/39sDitIeCMrVX2QyXHY46t?si=69208748bcd54d0d", youtube: "https://youtu.be/PzIXNqpCug0?si=wjS24ko5bKfUPQz_"},
+            {title: "Cigarettes out the Window", artist: "TV Girl", spotify: "https://open.spotify.com/track/6QeYSvYqYUsfBzsApbjDHO?si=d82a1773bf5a4f15", youtube: "https://youtu.be/7j6C9METNm0?si=tNEu5k-y8cN3qAi9"},
+            {title: "Save Your Tears", artist: "The Weeknd", spotify: "https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g", youtube: "https://www.youtube.com/watch?v=XXYlFuWEuKI"},
+            {title: " The Winner Takes It All", artist: "ABBA", spotify: "https://open.spotify.com/track/3oEkrIfXfSh9zGnE7eBzSV?si=681410e5d1e6420f", youtube: "https://youtu.be/92cwKCU8Z5c?si=W51CYbBq3ZZYLVSd"},
+            {title: "Gimme! Gimme! Gimme!", artist: "ABBA", spotify: "https://open.spotify.com/track/3vkQ5DAB1qQMYO4Mr9zJN6?si=16c4f624aae94702", youtube: "https://youtu.be/XEjLoHdbVeE?si=2ldCqWwe0JPyfjcm"},
+            {title: "Pink + White", artist: "Frank Ocean", spotify: "https://open.spotify.com/track/3xKsf9qdS1CyvXSMEid6g8?si=7ffbbc59567b4275", youtube: "https://youtu.be/uzS3WG6__G4?si=FQn0yCCdlJnaw1PM"},
+            {title: "Do I Wanna Know?", artist: "Arctic Monkeys", spotify: "https://open.spotify.com/track/5FVd6KXrgO9B3JPmC8OPst?si=3951fe5de5db40ee", youtube: "https://youtu.be/bpOSxM0rNPM?si=7eUD-SuhxVv1GwGr"},
+            {title: "505", artist: "Arctic Monkeys", spotify: "https://open.spotify.com/track/0BxE4FqsDD1Ot4YuBXwAPp?si=49fd02be9d2e4759", youtube: "https://youtu.be/qU9mHegkTc4?si=sTC2Y3PfvWXRvESf"},
+ {title: "Making Ends Meet", artist: "The Away Days", spotify: "https://open.spotify.com/track/2SRRTPeIImYZHNaXquEjLi?si=b28ca0f3ec1d49ec", youtube: "https://youtu.be/3YoYVYJJSuM?si=x8ML1GTEkCdY7RYT"},
+ {title: "Angela", artist: "Flower Face", spotify: "https://open.spotify.com/track/0wzThSEGQOnrGtFnyxGSMZ?si=5d08992a324b4691", youtube: "https://youtu.be/cXDzlGqc4Wg?si=_OxAw7LuTjIKRcSc"},
+            {title: "R U Mine?", artist: "Arctic Monkeys", spotify: "https://open.spotify.com/track/2AT8iROs4FQueDv2c8q2KE?si=b22772077f8d4f03", youtube: "https://youtu.be/ngzC_8zqInk?si=EtKKg6c28cZlNGvh"},
+            {title: "The Less I Know The Better", artist: "Tame Impala", spotify: "https://open.spotify.com/track/6K4t31amVTZDgR3sKmwUJJ?si=f775c1a26e61477c", youtube: "https://youtu.be/2SUwOgmvzK4?si=uuRpOdJoR9y-w-Id"},
+            {title: "New Person, Same Old Mistakes", artist: "Tame Impala", spotify: "https://open.spotify.com/track/52ojopYMUzeNcudsoz7O9D?si=6c1c796f31e24b1d", youtube: "https://youtu.be/_9bw_VtMUGA?si=Ek_w7d5AQBeEhvHY"},
+           
+           
+             {title: "Ana Negm", artist: "Cairokee", spotify: "https://open.spotify.com/track/6CU68VwcV10VfulVQMfj3X?si=6327e6abb26e4809", youtube: "https://youtu.be/sP7us95DFxE?si=_F5SyCpZHNW2mWTD"},
+            {title: "Let It Happen", artist: "Tame Impala", spotify: "https://open.spotify.com/track/2X485T9Z5Ly0xyaghN73ed?si=d923699147404134", youtube: "https://youtu.be/pFptt7Cargc?si=mRqMRNdPz8YFhSFb"},
+           {title: "Questions on My Mind", artist: "Faraj Suleiman", spotify: "https://open.spotify.com/track/24yw67zLpmbLpIDrZq8HwQ?si=e45a3e51fcaf41fe", youtube: "https://youtu.be/FZ8HH9aQ12U?si=GbuJ3Hxnw4wN_kxK"},
+            {title: " Lessa Bahinlha", artist: "Ramy Essam", spotify: "https://open.spotify.com/track/5Hto3NaFsv1or3zn3GdfY3?si=292b6dc826bf42db", youtube: "https://youtu.be/nZscnUakuJw?si=87K1aRzmfURrbLrg"},
+            {title: "Sabry Aalil", artist: "Sherine", spotify: "https://open.spotify.com/track/7qLXBcYW78is9LygQBziAU?si=5dee470ac8d8458c", youtube: "https://youtu.be/-HlEAEqps9c?si=fmHnc9CWvg9WowH9"},
+            {title: "Cacharel", artist: "Akher Zapheer", spotify: "https://open.spotify.com/track/4teT6bmFPxFQnPNThSbDMk?si=a8d1d9a9b8ad45fa", youtube: "https://youtu.be/UARwxVLMWyM?si=cQRCPR6IbhVNWJr-"},
+            {title: "Leh Ya Hana", artist: "Arnabeat ", spotify: "https://open.spotify.com/track/4ZblA6ehlUEGgy3cpENRrx?si=7607764477764944", youtube: "https://youtu.be/B4GgpCWsPms?si=glDaREp40O5LhzG3"},
+            {title: "The Night We Met", artist: "Lord Huron", spotify: "https://open.spotify.com/track/0QZ5yyl6B6utIWkxeBDxQN?si=12d60e24fe664094", youtube: "https://youtu.be/KtlgYxa6BMU?si=jE_XcRN5CBHB8wsh"},
+            {title: "Stay", artist: "Ghostly Kisses", spotify: "https://open.spotify.com/track/5fFQBL8Pnvnc9uszdadT7i?si=adbd37aafca24d7d", youtube: "https://youtu.be/gLIrZKE5Ukc?si=b9Xcy6pMIneyZa-I"},
+            {title: "Inni Mneeh", artist: "Mashrou' Leila", spotify: "https://open.spotify.com/track/2gHM7Lplt3UfTn3RhyIhrA?si=fcf18d02318e4923", youtube: "https://youtu.be/_RuKbA_5hk8?si=hzaGXmQTOgLEN65Z"}
+  ];
+
+
+    document.getElementById("randomBtn").addEventListener("click", () => {
+      const s = songs[Math.floor(Math.random() * songs.length)];
+      const picked = document.getElementById("picked");
+      picked.innerHTML = `
+        <div class="card">
+          <div class="top">
+            <div class="pfp">
+              <div class="playing">
+                <div class="greenline"></div>
+                <div class="greenline"></div>
+                <div class="greenline"></div>
+                <div class="greenline"></div>
+                <div class="greenline"></div>
+              </div>
+            </div>
+            <div class="texts">
+              <p class="title-1">${s.title}</p>
+              <p class="title-2">${s.artist}</p>
+            </div>
+          </div>
+          <div class="links">
+            <a href="${s.spotify}" target="_blank"><i class="fab fa-spotify"></i></a>
+            <a href="${s.youtube}" target="_blank"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      `;
+      picked.classList.add("show");
+    });
+  </script>
+</body>
+</html>
